@@ -16,7 +16,7 @@ chrome_options = webdriver.ChromeOptions()
 chrome_options.add_experimental_option("detach", True)
 
 service_obj = Service("E:\chromedriver-win64\chromedriver.exe");
-driver = webdriver.Chrome(service=service_obj, options=chrome_options)
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 # 웹페이지 열기
 driver.get("https://rahulshettyacademy.com/angularpractice/")
 #driver.get("https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/")
@@ -76,17 +76,16 @@ textareas = driver.find_elements(By.TAG_NAME, 'textarea')
 # Form과 연결되지 않은 요소만 추출
 independent_selects = []
 
-# for element in selects:
-#     try:
-#         element.find_element(By.XPATH, "./ancestor::form")
-#     except NoSuchElementException:
-#         independent_selects.append(element.get_attribute('outerHTML'))
+for element in selects:
+    try:
+        element.find_element(By.XPATH, "./ancestor::form")
+    except NoSuchElementException:
+        independent_selects.append(element)
 
-
-
-initialize_file()
+initialize_file('select_data.json')
+initialize_file('reset_index_select_data.json')
 # for index, select in enumerate(independent_selects,start = 1):
-for index, select in enumerate(selects,start = 1):
+for index, select in enumerate(independent_selects,start = 1):
     try:
         outerHTML = select.get_attribute('outerHTML')
         soup = BeautifulSoup(outerHTML, 'html.parser')
@@ -137,12 +136,12 @@ for index, select in enumerate(selects,start = 1):
 driver.quit()
 # 처리된 데이터 확인
 # 예: 파일에서 처리된 데이터를 읽어 출력
-with open('processed_data.json', 'r') as file:
+with open('select_data.json', 'r') as file:
     for line in file:
         print(json.loads(line))
 # 함수를 호출하여 index를 재설정하고 결과를 저장합니다.
-reset_indexes_in_json_file('processed_data.json', 'reset_index_data.json')
+reset_indexes_in_json_file('select_data.json', 'reset_index_select_data.json')
 # 예: 파일에서 처리된 데이터를 읽어 출력
-with open('reset_index_data.json', 'r') as file:
+with open('reset_index_select_data.json', 'r') as file:
     for line in file:
         print(json.loads(line))

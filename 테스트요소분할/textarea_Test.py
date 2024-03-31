@@ -74,20 +74,22 @@ script = """
     return getElementXPath(arguments[0]);
 """
 
+# 'input', 'select', 'textarea' 태그 요소 찾기
+# selects = driver.find_elements(By.TAG_NAME, 'select')
+# textareas = driver.find_elements(By.TAG_NAME, 'textarea')
 
 # Form과 연결되지 않은 요소만 추출
-independent_inputs = []
+#independent_inputs = []
 
-for element in inputs:
-    try:
-        element.find_element(By.XPATH, ".//ancestor::form")
-    except NoSuchElementException:
-        independent_inputs.append(element)
+# for element in inputs:
+#     try:
+#         element.find_element(By.XPATH, "./ancestor::form")
+#     except NoSuchElementException:
+#         independent_inputs.append(element.get_attribute('outerHTML'))
 
-initialize_file('input_data.json')
+initialize_file('input_filename.json')
 initialize_file('reset_input_data.json')
-
-for index, input in enumerate(independent_inputs,start = 1):
+for index, input in enumerate(inputs,start = 1):
     try:
         outerHTML = input.get_attribute('outerHTML')
 
@@ -145,6 +147,55 @@ with open('processed_data.json', 'r') as file:
     for line in file:
         print(json.loads(line))
 
+# 함수를 호출하여 index를 재설정하고 결과를 저장합니다.
+reset_indexes_in_json_file('processed_data.json', 'reset_index_data.json')
+# # 예: 파일에서 처리된 데이터를 읽어 출력
+# with open('reset_index_data.json', 'r') as file:
+#     for line in file:
+#         print(json.loads(line))
+# # 예: 파일에서 처리된 데이터를 읽어 출력
+# with open('reset_index_data.json', 'r') as file:
+#     for line in file:
+#         print(json.loads(line))
+# for index, textarea in enumerate(independent_textareas,start=1):
+#     try:
+#         soup = BeautifulSoup(textarea, 'html.parser')
+#         textarea_element = soup.find('textarea')
+#
+#         textarea_id = textarea_element.get('id')
+#         textarea_class = textarea_element.get('class')
+#         class_value = " ".join(textarea_class) if textarea_class else None
+#
+#         textarea_xpath = f"//textarea[@id='{textarea_id}']" if textarea_id else driver.execute_script(script, textarea)
+#
+#         textarea_name = textarea_element.get('name')
+#         textarea_disabled = 'disabled' if textarea_element.has_attr('disabled') else 'enabled'
+#         textarea_required = 'required' if textarea_element.has_attr('required') else 'not required'
+#
+#         current_fact = str({
+#             'tag': 'textarea',
+#             'id': textarea_id,
+#             'class_': class_value,
+#             'xPath': textarea_xpath,
+#             'name': textarea_name,
+#             'disabled': textarea_disabled,
+#             'required': textarea_required
+#         })
+#
+#         if current_fact not in sent_facts:
+#             assert_fact('web_test', eval(current_fact))
+#             sent_facts.add(current_fact)
+#     except NoSuchElementException:
+#         print(f"NoSuchElementException 발생, index: {index}. 요소가 없으므로 무시하고 다음으로 넘어감.")
+#         continue
+#     except StaleElementReferenceException:
+#         print(f"StaleElementReferenceException 발생, index: {index}. 요소 무시하고 다음으로 넘어감.")
+#         # StaleElementReferenceException이 발생하면 현재 요소를 무시하고 다음 요소로 넘어감
+#         continue
+#     except Exception as e:
+#         print(f"오류 발생: {e}, index: {index}")
+#         continue
+
 #브라우저 닫기
 driver.quit()
 # 처리된 데이터 확인
@@ -158,4 +209,3 @@ reset_indexes_in_json_file('input_data.json', 'reset_input_data.json')
 with open('reset_input_data.json', 'r') as file:
     for line in file:
         print(json.loads(line))
-

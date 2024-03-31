@@ -1,7 +1,7 @@
 import json
 
-def initialize_file():
-    with open('processed_data.json', 'w') as file:
+def initialize_file(input_filename):
+    with open(input_filename, 'w') as file:
         pass  # 파일을 열고 즉시 닫아서 내용을 초기화
 
 def reset_indexes_in_json_file(input_filename, output_filename):

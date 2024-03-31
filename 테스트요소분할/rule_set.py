@@ -10,9 +10,16 @@ from bs4 import BeautifulSoup
 def save_processed_data(data):
     # 여기에 데이터를 JSON 파일, 데이터베이스, 또는 다른 형태로 저장하는 로직 구현
     # 예: JSON 파일에 저장
-    with open('processed_data.json', 'a',encoding='utf8') as file:
+    # 데이터 객체에서 'tag' 값을 기반으로 파일명 결정
+    tag_name = data.get('tag', 'processed')  # 'tag' 키가 없는 경우 'unknown'을 기본값으로 사용
+    filename = f'{tag_name}_data.json'  # 파일명 형식을 '{태그명}_data.json'으로 설정
+
+    with open(filename, 'a', encoding='utf8') as file:
         import json
         file.write(json.dumps(data) + '\n')
+    # with open('processed_data.json', 'a',encoding='utf8') as file:
+    #     import json
+    #     file.write(json.dumps(data) + '\n')
 
 with ruleset('web_test'):
 
@@ -340,10 +347,36 @@ with ruleset('web_test'):
         })
 
 # textarea 요소에 대한 규칙
-@when_all((m.tag == 'textarea') & (m.xPath != None))
-def textarea_test(c):
-    # textarea 요소에 대한 처리 로직
-    print(f"Textarea 태그: {c.m.xPath}")
+    @when_all((m.tag == 'textarea') & (m.xPath != None))
+    def textarea_test(c):
+        # textarea 요소에 대한 처리 로직
+        data = {
+            'tag': c.m.tag,
+            'xPath': c.m.xPath,
+            'name': c.m.name,
+            'id': c.m.id,
+            'rows': c.m.rows,
+            'cols': c.m.cols,
+            'disabled': c.m.disabled,
+            'readonly': c.m.readonly,
+            'placeholder': c.m.placeholder,
+            'maxlength': c.m.maxlength,
+            'autofocus': c.m.autofocus,
+            'wrap': c.m.wrap
+        }
+        # 목적(purpose) 설정: name, id를 기반으로 결정
+        if data['name']:
+            purpose = data['name']
+        elif data['id']:
+            purpose = data['id']
+        else:
+            purpose = "None"
+        # purpose 추가
+        data['purpose'] = purpose
+
+        # 데이터 저장 (예시 함수, 실제 구현에 맞게 변경 필요)
+        save_processed_data(data)
+        print(f"Textarea 태그: {c.m.xPath}")
     # 추가적인 정보 출력 등
 # 테스트 케이스 예시
 

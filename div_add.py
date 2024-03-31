@@ -9,22 +9,20 @@ from durable.lang import *
 import rule_set
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import json
-from json_process import initialize_file, reset_indexes_in_json_file
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException
+from main import initialize_file
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_experimental_option("detach", True)
 
 service_obj = Service("E:\chromedriver-win64\chromedriver.exe");
-#driver = webdriver.Chrome(service=service_obj, options=chrome_options)
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+driver = webdriver.Chrome(service=service_obj, options=chrome_options)
 
 # 웹페이지 열기
 driver.get("https://www.naver.com")
 
 # 페이지가 완전히 로드될 때까지 기다립니다.
-WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.TAG_NAME, 'div')))
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'div')))
 
 # 'button', 'form', 'a' 태그 요소 찾기
 divs = driver.find_elements(By.TAG_NAME,'div')
@@ -68,14 +66,15 @@ script = """
 """
 
 # 추출된 요소에 대한 assert_fact
-initialize_file('div_Test.json')
-initialize_file('reset_index_div_Test.json')
+initialize_file()
 for index,div in enumerate(divs,start=1):
     try:
-
-        # div 요소의 outerHTML을 가져오기
-        outerHTML = div.get_attribute('outerHTML')
-
+        try:
+            # div 요소의 outerHTML을 가져오기
+            outerHTML = div.get_attribute('outerHTML')
+        except StaleElementReferenceException:
+            # StaleElementReferenceException이 발생하면 현재 요소를 무시하고 다음 요소로 넘어감
+            continue
         # div 요소의 outerHTML을 가져와 BeautifulSoup 객체 생성
         soup = BeautifulSoup(div.get_attribute('outerHTML'), 'html.parser')
         text = soup.text.strip()
@@ -124,15 +123,8 @@ for index,div in enumerate(divs,start=1):
         if current_fact not in sent_facts:
             assert_fact('web_test', eval(current_fact))
             sent_facts.add(current_fact)
-    except NoSuchElementException:
-        #print(f"NoSuchElementException 발생, index: {index}. 요소가 없으므로 무시하고 다음으로 넘어감.")
-        continue
-    except StaleElementReferenceException:
-        #print(f"StaleElementReferenceException 발생, index: {index}. 요소 무시하고 다음으로 넘어감.")
-        # StaleElementReferenceException이 발생하면 현재 요소를 무시하고 다음 요소로 넘어감
-        continue
     except Exception as e:
-        print(f"오류 발생: {e}, index: {index}")
+        print(f"오류 발생: {e}")
         continue
 
 
@@ -140,13 +132,6 @@ for index,div in enumerate(divs,start=1):
 driver.quit()
 # 처리된 데이터 확인
 # 예: 파일에서 처리된 데이터를 읽어 출력
-with open('div_data.json', 'r') as file:
-    for line in file:
-        print(json.loads(line))
-
-# 함수를 호출하여 index를 재설정하고 결과를 저장합니다.
-reset_indexes_in_json_file('div_data.json', 'reset_index_div_data.json')
-# 예: 파일에서 처리된 데이터를 읽어 출력
-with open('reset_index_div_data.json', 'r') as file:
+with open('processed_data.json', 'r') as file:
     for line in file:
         print(json.loads(line))

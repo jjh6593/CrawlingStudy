@@ -22,24 +22,7 @@ buttons = driver.find_elements(By.TAG_NAME, 'button')
 forms = driver.find_elements(By.TAG_NAME, 'form')
 links = driver.find_elements(By.TAG_NAME, 'a')
 
-# # XPath 추출하는 자바스크립트 함수
-# script = """
-#     var getElementXPath = function(element) {
-#         //if (element.id !== '') return 'id("' + element.id + '")';
-#         if (element.id !== '') return "//" + element.tagName.toLowerCase() + "[@id='" + element.id + "']";
-#         if (element === document.body) return element.tagName.toLowerCase();
-#
-#         var ix = 0;
-#         var siblings = element.parentNode.childNodes;
-#         for (var i = 0; i < siblings.length; i++) {
-#             var sibling = siblings[i];
-#             if (sibling === element) return getElementXPath(element.parentNode) + '/' + element.tagName.toLowerCase() + '[' + (ix + 1) + ']';
-#             if (sibling.nodeType === 1 && sibling.tagName === element.tagName) ix++;
-#         }
-#     };
-#     return getElementXPath(arguments[0]);
-# """
-# XPath 추출하는 자바스크립트 함수
+
 script = """
     var getElementXPath = function(element) {
         // id를 우선적으로 사용
@@ -125,6 +108,15 @@ for index, form in enumerate(forms, start = 1):
     except Exception as e:
         print(f"오류 발생: {e}")
         continue
+
+
+
+
+
+
+
+
+
 
 # 브라우저 닫기
 driver.quit()
