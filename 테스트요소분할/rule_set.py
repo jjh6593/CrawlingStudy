@@ -2,6 +2,7 @@ from durable.lang import *
 # xpath_extractor 모듈 import
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
+from json_process import initialize_file
 # from selenium.webdriver.common.by import By
 # from selenium import webdriver
 # from selenium.webdriver.chrome.service import Service
@@ -170,8 +171,8 @@ with ruleset('web_test'):
             "license": "라이선스 링크",
             "next": "다음 문서",
             "nofollow": "링크 따라가지 않음",
-            "noreferrer": "referrer 정보 전송하지 않음",
-            "noopener": "새 창에서 열리지만 opener 속성 없음",
+            # "noreferrer": "referrer 정보 전송하지 않음",
+            # "noopener": "새 창에서 열리지만 opener 속성 없음",
             "prev": "이전 문서",
             "search": "검색 링크",
             "tag": "태그 링크"

@@ -15,10 +15,12 @@ from selenium.common.exceptions import NoSuchElementException, StaleElementRefer
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_experimental_option("detach", True)
-
-service_obj = Service("E:\chromedriver-win64\chromedriver.exe");
+#service_obj = Service("E:\chromedriver-win64\chromedriver.exe");
 #driver = webdriver.Chrome(service=service_obj, options=chrome_options)
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+#service = Service(ChromeDriverManager().install())
+#driver = webdriver.Chrome(service=service, options=chrome_options)
+driver = webdriver.Chrome()
+#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
 # 웹페이지 열기
 driver.get("https://www.naver.com")
@@ -37,8 +39,6 @@ script = """
         if (element.id !== '') {
             return "//" + element.tagName.toLowerCase() + "[@id='" + element.id + "']";
         }
-
-
         // 다른 속성을 이용한 XPath 생성
         var attributes = element.attributes;
         var attributeXPath = '';
@@ -134,7 +134,6 @@ for index,div in enumerate(divs,start=1):
     except Exception as e:
         print(f"오류 발생: {e}, index: {index}")
         continue
-
 
 # 브라우저 닫기
 driver.quit()

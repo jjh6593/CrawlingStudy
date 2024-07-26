@@ -15,12 +15,18 @@ sent_facts = set()
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_experimental_option("detach", True)
+#service_obj = Service("E:\chromedriver-win64\chromedriver.exe");
+#driver = webdriver.Chrome(service=service_obj, options=chrome_options)
+#service = Service(ChromeDriverManager().install())
+#driver = webdriver.Chrome(service=service, options=chrome_options)
+driver = webdriver.Chrome()
+#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
-service_obj = Service("E:\chromedriver-win64\chromedriver.exe");
-driver = webdriver.Chrome(service=service_obj, options=chrome_options)
+# service_obj = Service("E:\chromedriver-win64\chromedriver.exe");
+# driver = webdriver.Chrome(service=service_obj, options=chrome_options)
 # 웹페이지 열기
 driver.get("https://www.daum.net/")
-
+#driver.get("https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/")
 # 'button', 'form', 'a' 태그 요소 찾기
 buttons = driver.find_elements(By.TAG_NAME, 'button')
 forms = driver.find_elements(By.TAG_NAME, 'form')
@@ -67,7 +73,8 @@ script = """
     };
     return getElementXPath(arguments[0]);
 """
-initialize_file()
+initialize_file('button_data.json')
+initialize_file('reset_button_data.json')
 for index, button in enumerate(buttons,start=1):
     try:
 
@@ -125,13 +132,13 @@ for index, button in enumerate(buttons,start=1):
 driver.quit()
 # 처리된 데이터 확인
 # 예: 파일에서 처리된 데이터를 읽어 출력
-with open('processed_data.json', 'r') as file:
+with open('button_data.json', 'r') as file:
     for line in file:
         print(json.loads(line))
 
 # 함수를 호출하여 index를 재설정하고 결과를 저장합니다.
-reset_indexes_in_json_file('processed_data.json', 'reset_index_data.json')
+reset_indexes_in_json_file('button_data.json', 'reset_button_data.json')
 # 예: 파일에서 처리된 데이터를 읽어 출력
-with open('reset_index_data.json', 'r') as file:
+with open('reset_button_data.json', 'r') as file:
     for line in file:
         print(json.loads(line))

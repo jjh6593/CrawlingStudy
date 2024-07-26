@@ -15,14 +15,15 @@ from json_process import initialize_file, reset_indexes_in_json_file
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_experimental_option("detach", True)
+chrome_options.add_argument("--start-maximized")
 
 service_obj = Service("E:\chromedriver-win64\chromedriver.exe");
 #driver = webdriver.Chrome(service=service_obj, options=chrome_options)
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
 # 웹페이지 열기
-driver.get("https://rahulshettyacademy.com/angularpractice/")
-#driver.get("https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/")
+#driver.get("https://rahulshettyacademy.com/angularpractice/")
+driver.get("https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/")
 # 페이지가 완전히 로드될 때까지 기다립니다.
 WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.TAG_NAME, 'div')))
 
