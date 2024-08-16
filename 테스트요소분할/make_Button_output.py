@@ -4,53 +4,33 @@ from json_process import load_processed_data
 
 
 # 예측 문장을 생성하는 함수
-# 예측 문장을 생성하는 함수
 def generate_prediction(data):
-    target_info = {
-        "_blank": "새 창이나 탭에서 열립니다.",
-        "_self": "같은 프레임이나 창에서 열립니다.",
-        "_parent": "부모 프레임에서 열립니다.",
-        "_top": "전체 창에서 열립니다."
-    }
-
-    rel_info = {
-        "alternate": "대체 버전 링크",
-        "author": "저자 링크",
-        "bookmark": "북마크",
-        "external": "외부 링크",
-        "help": "도움말 링크",
-        "license": "라이선스 링크",
-        "next": "다음 문서",
-        "nofollow": "링크 따라가지 않음",
-        "noreferrer": "referrer 정보 전송하지 않음",
-        "noopener": "새 창에서 열리지만 opener 속성 없음",
-        "prev": "이전 문서",
-        "search": "검색 링크",
-        "tag": "태그 링크"
-    }
-
     predictions = []
     for item in data:
         tag = item.get('tag')
         xPath = item.get('xPath')
-        href = item.get('href', 'None')
-        text = item.get('text', 'None')
+        input_value = item.get('value')
         role = item.get('role')
-        target = item.get('target', '_self')
-        rel = item.get('rel', '기본 동작')
-        download = item.get('download', '0')
+        disabled = item.get('disabled')
+        btn_form = item.get('btn_form')
 
         # 예측 문장 생성
-        target_desc = target_info.get(target, "알 수 없음")
-        rel_desc = rel_info.get(rel, "기본 동작")
-
-        result = f"해당 링크는 '{role}' 역할을 하며, target은 '{target_desc}', rel은 '{rel_desc}'입니다."
+        result = f"해당 버튼은 '{role}'의 역할, "
+        if disabled:
+            result += "클릭할 수 없는 상태"
+        else:
+            result += "클릭할 수 있는 상태"
+        if input_value:  # input_value가 None이 아니고 빈 문자열이 아닐 때
+            result += f", '{input_value}' 값을 서버로 전송"
+        if btn_form:
+            result += f", '{btn_form}'과 관련된 행동을 해야함"
+        result += "."
 
         prediction = {
-            'Type': 'Link Click',
+            'Type': 'Button Click',
             'Tag': tag,
             'Target': f'XPath: {xPath}',
-            'Input': href,
+            'Input': input_value if input_value else "None",
             'Result': result
         }
 
@@ -58,14 +38,13 @@ def generate_prediction(data):
 
     return predictions
 
-
 # 예시: JSON 파일에서 데이터를 읽고 예측 문장을 생성
 filename = 'reset_button_data.json'
 data = load_processed_data(filename, encoding='utf8')  # utf8로 인코딩 명시
 predictions = generate_prediction(data)
 
 # 예측 문장을 파일로 저장
-output_filename = 'reset_button_data.json'
+output_filename = 'button_output.json'
 with open(output_filename, 'w', encoding='utf8') as outfile:
     for prediction in predictions:
         outfile.write(json.dumps(prediction, ensure_ascii=False) + '\n')

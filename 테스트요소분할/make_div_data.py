@@ -15,10 +15,7 @@ from selenium.common.exceptions import NoSuchElementException, StaleElementRefer
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_experimental_option("detach", True)
-#service_obj = Service("E:\chromedriver-win64\chromedriver.exe");
-#driver = webdriver.Chrome(service=service_obj, options=chrome_options)
-#service = Service(ChromeDriverManager().install())
-#driver = webdriver.Chrome(service=service, options=chrome_options)
+
 driver = webdriver.Chrome()
 #driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
@@ -69,7 +66,7 @@ script = """
 
 # 추출된 요소에 대한 assert_fact
 initialize_file('div_Test.json')
-initialize_file('reset_index_div_Test.json')
+initialize_file('reset_div_Test.json')
 for index,div in enumerate(divs,start=1):
     try:
 
@@ -79,6 +76,9 @@ for index,div in enumerate(divs,start=1):
         # div 요소의 outerHTML을 가져와 BeautifulSoup 객체 생성
         soup = BeautifulSoup(div.get_attribute('outerHTML'), 'html.parser')
         text = soup.text.strip()
+        # 텍스트 길이가 50을 초과하면 반복문을 건너뜁니다.
+        if len(text) > 15:
+            continue
         div_element = soup.find('div')  # div 요소를 찾습니다.
 
         # id 속성이 있는지 확인
@@ -144,8 +144,8 @@ with open('div_data.json', 'r') as file:
         print(json.loads(line))
 
 # 함수를 호출하여 index를 재설정하고 결과를 저장합니다.
-reset_indexes_in_json_file('div_data.json', 'reset_index_div_data.json')
+reset_indexes_in_json_file('div_data.json', 'reset_div_data.json', input_encoding='utf8', output_encoding='utf8')
 # 예: 파일에서 처리된 데이터를 읽어 출력
-with open('reset_index_div_data.json', 'r') as file:
+with open('reset_div_data.json', 'r',encoding='utf8') as file:
     for line in file:
         print(json.loads(line))

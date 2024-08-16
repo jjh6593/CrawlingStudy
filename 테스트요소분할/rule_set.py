@@ -213,16 +213,49 @@ with ruleset('web_test'):
         save_processed_data(link_data)
 
 
+    # @when_all((m.tag == 'div') & (m.xPath != None))
+    # def element_info(c):
+    #     # 속성에 따른 메시지 설정
+    #
+    #     role = c.m.role if c.m.role else (
+    #         c.m.name if c.m.name else (c.m.id if c.m.id else "unspecified"))
+    #
+    #     # role이 "unspecified"일 경우 저장하지 않음
+    #     if role == "unspecified":
+    #         return
+    #     result = f"contenteditable: {'yes' if c.m.contenteditable == 'true' else 'no'}, draggable: {'yes' if c.m.draggable == 'true' else 'no'}, hidden: {'yes' if c.m.hidden == 'true' else 'no'}"
+    #
+    #     div_data = {
+    #         'tag': c.m.tag,
+    #         'index': c.m.index,
+    #         'role': role,
+    #         'text': c.m.text,
+    #         'result': result,
+    #         'tabindex': c.m.tabindex if c.m.tabindex else "None",
+    #         'xPath': c.m.xPath,
+    #         'title': c.m.title if c.m.title else "None"
+    #     }
+    #     save_processed_data(div_data)
     @when_all((m.tag == 'div') & (m.xPath != None))
     def element_info(c):
-        # 속성에 따른 메시지 설정
-
+        # role 설정
         role = c.m.role if c.m.role else (
             c.m.name if c.m.name else (c.m.id if c.m.id else "unspecified"))
 
         # role이 "unspecified"일 경우 저장하지 않음
         if role == "unspecified":
             return
+
+        # 텍스트가 비어 있는 경우 제외
+        if not c.m.text.strip():
+            return
+
+        # 텍스트 길이가 너무 짧거나 긴 경우 제외
+        # if len(c.m.text) < 10 or len(c.m.text) > 100:
+        #
+        #     return
+        print(c.m.text)
+        # 조건을 모두 통과한 경우 데이터 저장
         result = f"contenteditable: {'yes' if c.m.contenteditable == 'true' else 'no'}, draggable: {'yes' if c.m.draggable == 'true' else 'no'}, hidden: {'yes' if c.m.hidden == 'true' else 'no'}"
 
         div_data = {
@@ -236,7 +269,6 @@ with ruleset('web_test'):
             'title': c.m.title if c.m.title else "None"
         }
         save_processed_data(div_data)
-
 
     def print_additional_info(c):
         # 추가 속성에 대한 정보 출력
